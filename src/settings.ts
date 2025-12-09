@@ -137,7 +137,7 @@ export const DEFAULT_SETTINGS: KBConverterSettings = {
 		background: 'F5F5F5',
 		borderColor: 'CCCCCC',
 		fontName: 'Consolas',  // Company template uses Consolas
-		fontSize: 11           // 11pt to match template
+		fontSize: 9            // 9pt for code blocks
 	},
 
 	tableStyle: {
