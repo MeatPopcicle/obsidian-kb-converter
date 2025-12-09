@@ -54,6 +54,7 @@ export class DocxGenerator {
 	private imageResolver: ImageResolver | null;
 	private numbering: any[] = [];
 	private currentListId = 0;
+	private skipNextList = false;  // Flag to skip TOC list
 
 	constructor(settings: KBConverterSettings, imageResolver: ImageResolver | null = null) {
 		this.settings = settings;
@@ -62,6 +63,7 @@ export class DocxGenerator {
 
 	async generate(ast: Root): Promise<ArrayBuffer> {
 		this.children = [];
+		this.skipNextList = false;
 
 		// Process all top-level nodes
 		for (const node of ast.children) {
@@ -174,7 +176,12 @@ export class DocxGenerator {
 				break;
 
 			case 'list':
-				await this.processList(node);
+				if (this.skipNextList) {
+					// Skip TOC list content
+					this.skipNextList = false;
+				} else {
+					await this.processList(node);
+				}
 				break;
 
 			case 'table':
@@ -215,27 +222,18 @@ export class DocxGenerator {
 			6: HeadingLevel.HEADING_6
 		};
 
+		// Check if this is a Table of Contents heading - skip entirely
+		const headingText = this.extractTextFromNodes(node.children).toLowerCase();
+		if (headingText.includes('table of contents') || headingText === 'toc' || headingText === 'contents') {
+			// Set flag to skip the following list (TOC content)
+			this.skipNextList = true;
+			return [];  // Don't output anything for TOC heading
+		}
+
 		const headingParagraph = new Paragraph({
 			heading: headingLevels[level] || HeadingLevel.HEADING_1,
 			children: this.processInlineContent(node.children)
 		});
-
-		// Check if this is a Table of Contents heading
-		const headingText = this.extractTextFromNodes(node.children).toLowerCase();
-		if (headingText.includes('table of contents') || headingText === 'toc' || headingText === 'contents') {
-			// Add a note about generating TOC in Word
-			const tocNote = new Paragraph({
-				children: [
-					new TextRun({
-						text: '[Auto-generate TOC in Word: References → Table of Contents]',
-						italics: true,
-						color: '666666'
-					})
-				],
-				spacing: { before: 120, after: 120 }
-			});
-			return [headingParagraph, tocNote];
-		}
 
 		return [headingParagraph];
 	}
