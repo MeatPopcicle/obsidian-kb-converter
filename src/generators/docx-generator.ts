@@ -155,7 +155,7 @@ export class DocxGenerator {
 	private async processNode(node: Content | Callout): Promise<void> {
 		switch (node.type) {
 			case 'heading':
-				this.children.push(this.createHeading(node));
+				this.children.push(...this.createHeading(node));
 				break;
 
 			case 'paragraph':
@@ -204,7 +204,7 @@ export class DocxGenerator {
 		}
 	}
 
-	private createHeading(node: Heading): Paragraph {
+	private createHeading(node: Heading): Paragraph[] {
 		const level = node.depth;
 		const headingLevels: { [key: number]: typeof HeadingLevel[keyof typeof HeadingLevel] } = {
 			1: HeadingLevel.HEADING_1,
@@ -215,10 +215,41 @@ export class DocxGenerator {
 			6: HeadingLevel.HEADING_6
 		};
 
-		return new Paragraph({
+		const headingParagraph = new Paragraph({
 			heading: headingLevels[level] || HeadingLevel.HEADING_1,
 			children: this.processInlineContent(node.children)
 		});
+
+		// Check if this is a Table of Contents heading
+		const headingText = this.extractTextFromNodes(node.children).toLowerCase();
+		if (headingText.includes('table of contents') || headingText === 'toc' || headingText === 'contents') {
+			// Add a note about generating TOC in Word
+			const tocNote = new Paragraph({
+				children: [
+					new TextRun({
+						text: '[Auto-generate TOC in Word: References → Table of Contents]',
+						italics: true,
+						color: '666666'
+					})
+				],
+				spacing: { before: 120, after: 120 }
+			});
+			return [headingParagraph, tocNote];
+		}
+
+		return [headingParagraph];
+	}
+
+	private extractTextFromNodes(nodes: Content[]): string {
+		let text = '';
+		for (const node of nodes) {
+			if (node.type === 'text') {
+				text += node.value;
+			} else if ('children' in node && Array.isArray(node.children)) {
+				text += this.extractTextFromNodes(node.children as Content[]);
+			}
+		}
+		return text;
 	}
 
 	private async createParagraph(node: MdParagraph): Promise<Paragraph> {
@@ -229,30 +260,32 @@ export class DocxGenerator {
 		});
 	}
 
-	private processInlineContent(nodes: Content[]): (TextRun | ImageRun)[] {
+	private processInlineContent(nodes: Content[], formatting: { bold?: boolean; italics?: boolean } = {}): (TextRun | ImageRun)[] {
 		const runs: (TextRun | ImageRun)[] = [];
 
 		for (const node of nodes) {
 			switch (node.type) {
 				case 'text':
-					runs.push(new TextRun({ text: node.value }));
+					runs.push(new TextRun({
+						text: node.value,
+						bold: formatting.bold,
+						italics: formatting.italics
+					}));
 					break;
 
 				case 'strong':
-					runs.push(...this.processInlineContent(node.children).map(run => {
-						if (run instanceof TextRun) {
-							return new TextRun({ text: (run as any).text || '', bold: true });
-						}
-						return run;
+					// Process children with bold formatting added
+					runs.push(...this.processInlineContent(node.children, {
+						...formatting,
+						bold: true
 					}));
 					break;
 
 				case 'emphasis':
-					runs.push(...this.processInlineContent(node.children).map(run => {
-						if (run instanceof TextRun) {
-							return new TextRun({ text: (run as any).text || '', italics: true });
-						}
-						return run;
+					// Process children with italic formatting added
+					runs.push(...this.processInlineContent(node.children, {
+						...formatting,
+						italics: true
 					}));
 					break;
 
@@ -261,6 +294,8 @@ export class DocxGenerator {
 						text: node.value,
 						font: this.settings.codeBlockStyle.fontName,
 						size: this.settings.codeBlockStyle.fontSize * 2, // Half-points
+						bold: formatting.bold,
+						italics: formatting.italics,
 						shading: {
 							type: ShadingType.SOLID,
 							color: this.settings.codeBlockStyle.background
@@ -269,8 +304,8 @@ export class DocxGenerator {
 					break;
 
 				case 'link':
-					// For now, just include the text
-					runs.push(...this.processInlineContent(node.children));
+					// For now, just include the text with current formatting
+					runs.push(...this.processInlineContent(node.children, formatting));
 					break;
 
 				case 'break':
@@ -280,7 +315,11 @@ export class DocxGenerator {
 				default:
 					// Handle other inline elements
 					if ('value' in node && typeof node.value === 'string') {
-						runs.push(new TextRun({ text: node.value }));
+						runs.push(new TextRun({
+							text: node.value,
+							bold: formatting.bold,
+							italics: formatting.italics
+						}));
 					}
 					break;
 			}
@@ -322,10 +361,11 @@ export class DocxGenerator {
 		}
 	}
 
-	private async processListItem(node: ListItem, isOrdered: boolean, index: number): Promise<void> {
+	private async processListItem(node: ListItem, isOrdered: boolean, index: number, depth: number = 0): Promise<void> {
 		for (const child of node.children) {
 			if (child.type === 'paragraph') {
 				const runs = await this.processInlineContentAsync(child.children);
+				const indentTwips = 720 + (depth * 360);  // 0.5 inch base + 0.25 inch per level
 
 				this.children.push(new Paragraph({
 					children: [
@@ -334,12 +374,25 @@ export class DocxGenerator {
 						}),
 						...runs
 					],
+					indent: {
+						left: indentTwips,
+						hanging: 360  // Hanging indent for bullet/number
+					},
 					spacing: { after: 120 }  // 6pt spacing after list items
 				}));
 			} else if (child.type === 'list') {
-				// Nested list
-				await this.processList(child);
+				// Nested list - increment depth
+				await this.processListWithDepth(child, depth + 1);
 			}
+		}
+	}
+
+	private async processListWithDepth(node: List, depth: number): Promise<void> {
+		const isOrdered = node.ordered || false;
+
+		for (let i = 0; i < node.children.length; i++) {
+			const item = node.children[i];
+			await this.processListItem(item, isOrdered, i, depth);
 		}
 	}
 }

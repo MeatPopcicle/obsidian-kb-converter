@@ -43,25 +43,7 @@ export function createCalloutParagraphs(
 		const isLast = i === callout.children.length - 1;
 
 		if (child.type === 'paragraph') {
-			const runs = child.children.map(node => {
-				if (node.type === 'text') {
-					return new TextRun({ text: node.value });
-				} else if (node.type === 'strong') {
-					const text = extractText(node);
-					return new TextRun({ text, bold: true });
-				} else if (node.type === 'emphasis') {
-					const text = extractText(node);
-					return new TextRun({ text, italics: true });
-				} else if (node.type === 'inlineCode') {
-					return new TextRun({
-						text: node.value,
-						font: 'Courier New',
-						size: 18  // 9pt
-					});
-				}
-				return new TextRun({ text: '' });
-			});
-
+			const runs = processCalloutInlineContent(child.children);
 			paragraphs.push(createCalloutParagraph(runs, style, false, isLast));
 		}
 	}
@@ -131,4 +113,71 @@ function extractText(node: any): string {
 		return node.children.map(extractText).join('');
 	}
 	return '';
+}
+
+/**
+ * Process inline content for callouts, handling nested formatting and line breaks
+ */
+function processCalloutInlineContent(
+	nodes: any[],
+	formatting: { bold?: boolean; italics?: boolean } = {}
+): TextRun[] {
+	const runs: TextRun[] = [];
+
+	for (const node of nodes) {
+		switch (node.type) {
+			case 'text':
+				runs.push(new TextRun({
+					text: node.value,
+					bold: formatting.bold,
+					italics: formatting.italics
+				}));
+				break;
+
+			case 'strong':
+				runs.push(...processCalloutInlineContent(node.children, {
+					...formatting,
+					bold: true
+				}));
+				break;
+
+			case 'emphasis':
+				runs.push(...processCalloutInlineContent(node.children, {
+					...formatting,
+					italics: true
+				}));
+				break;
+
+			case 'inlineCode':
+				runs.push(new TextRun({
+					text: node.value,
+					font: 'Courier New',
+					size: 18,  // 9pt
+					bold: formatting.bold,
+					italics: formatting.italics
+				}));
+				break;
+
+			case 'break':
+				runs.push(new TextRun({ break: 1 }));
+				break;
+
+			case 'link':
+				// Process link children with current formatting
+				runs.push(...processCalloutInlineContent(node.children, formatting));
+				break;
+
+			default:
+				if (node.value) {
+					runs.push(new TextRun({
+						text: node.value,
+						bold: formatting.bold,
+						italics: formatting.italics
+					}));
+				}
+				break;
+		}
+	}
+
+	return runs;
 }
