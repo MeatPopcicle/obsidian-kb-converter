@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-kb-converter",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Bidirectional Markdown-DOCX conversion for Obsidian",
 	"main": "main.js",
 	"scripts": {
