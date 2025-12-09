@@ -1,0 +1,38 @@
+{
+	"name": "obsidian-kb-converter",
+	"version": "0.1.0",
+	"description": "Bidirectional Markdown-DOCX conversion for Obsidian",
+	"main": "main.js",
+	"scripts": {
+		"dev": "node esbuild.config.mjs",
+		"build": "node esbuild.config.mjs production"
+	},
+	"keywords": [
+		"obsidian",
+		"plugin",
+		"docx",
+		"word",
+		"markdown",
+		"export",
+		"import"
+	],
+	"author": "gauol",
+	"license": "MIT",
+	"devDependencies": {
+		"@types/node": "^20.0.0",
+		"@types/turndown": "^5.0.5",
+		"esbuild": "^0.21.0",
+		"obsidian": "^1.5.0",
+		"typescript": "^5.4.0"
+	},
+	"dependencies": {
+		"docx": "^9.0.0",
+		"mammoth": "^1.11.0",
+		"turndown": "^7.2.0",
+		"turndown-plugin-gfm": "^1.0.2",
+		"unified": "^11.0.0",
+		"remark-parse": "^11.0.0",
+		"remark-gfm": "^4.0.0",
+		"unist-util-visit": "^5.0.0"
+	}
+}
