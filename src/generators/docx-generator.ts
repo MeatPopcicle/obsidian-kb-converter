@@ -222,18 +222,29 @@ export class DocxGenerator {
 			6: HeadingLevel.HEADING_6
 		};
 
-		// Check if this is a Table of Contents heading - skip entirely
-		const headingText = this.extractTextFromNodes(node.children).toLowerCase();
-		if (headingText.includes('table of contents') || headingText === 'toc' || headingText === 'contents') {
-			// Set flag to skip the following list (TOC content)
-			this.skipNextList = true;
-			return [];  // Don't output anything for TOC heading
-		}
-
 		const headingParagraph = new Paragraph({
 			heading: headingLevels[level] || HeadingLevel.HEADING_1,
 			children: this.processInlineContent(node.children)
 		});
+
+		// Check if this is a Table of Contents heading
+		const headingText = this.extractTextFromNodes(node.children).toLowerCase();
+		if (headingText.includes('table of contents') || headingText === 'toc' || headingText === 'contents') {
+			// Set flag to skip the following list (TOC content)
+			this.skipNextList = true;
+			// Add note about generating TOC in Word
+			const tocNote = new Paragraph({
+				children: [
+					new TextRun({
+						text: '[Auto-generate TOC in Word: References → Table of Contents]',
+						italics: true,
+						color: '666666'
+					})
+				],
+				spacing: { before: 120, after: 120 }
+			});
+			return [headingParagraph, tocNote];
+		}
 
 		return [headingParagraph];
 	}
