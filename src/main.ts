@@ -346,6 +346,27 @@ export default class KBConverterPlugin extends Plugin {
 			}
 		}
 
+		// Insert source callout if enabled
+		if (this.settings.importSettings.insertSourceCallout) {
+			const imageInfo = result.images.length > 0
+				? { count: result.images.length, path: assetsFolder }
+				: null;
+			const sourceCallout = this.createSourceCallout(basename, outputFolder, imageInfo);
+			markdown = sourceCallout + '\n\n' + markdown;
+			this.logger.debug('Inserted source callout');
+		}
+
+		// Auto-apply template if enabled
+		if (this.settings.importSettings.autoApplyTemplate) {
+			const templateContent = await this.getTemplateForFilename(basename);
+			if (templateContent) {
+				// Remove Templater syntax from template (we're not running Templater)
+				const cleanedTemplate = this.cleanTemplaterSyntax(templateContent);
+				markdown = cleanedTemplate + '\n\n---\n\n## Imported Content\n\n' + markdown;
+				this.logger.info(`Applied template based on filename: ${basename}`);
+			}
+		}
+
 		// Save the markdown file
 		const mdPath = normalizePath(
 			outputFolder ? `${outputFolder}/${basename}.md` : `${basename}.md`
@@ -411,5 +432,114 @@ export default class KBConverterPlugin extends Plugin {
 	 */
 	async getImageBuffer(file: TFile): Promise<ArrayBuffer> {
 		return await this.app.vault.readBinary(file);
+	}
+
+	/**
+	 * Create source callout for imported document
+	 */
+	private createSourceCallout(
+		basename: string,
+		outputFolder: string,
+		imageInfo: { count: number; path: string } | null
+	): string {
+		const importSettings = this.settings.importSettings;
+		const calloutType = importSettings.sourceCalloutType || 'note';
+		const calloutTitle = importSettings.sourceCalloutTitle || 'Source Document';
+
+		// Build image line
+		let imageLine: string;
+		if (imageInfo) {
+			const relativePath = imageInfo.path.startsWith(outputFolder)
+				? './' + imageInfo.path.slice(outputFolder.length + 1)
+				: imageInfo.path;
+			imageLine = `> **Images**: ${imageInfo.count} extracted to \`${relativePath}\``;
+		} else {
+			imageLine = `> **Images**: No images extracted`;
+		}
+
+		// Build the callout
+		const lines = [
+			`> [!${calloutType}] ${calloutTitle}`,
+			`> This note was converted from a DOCX file.`,
+			`> **Local**: [[${basename}.docx]]`,
+			`> **SharePoint**: `,
+			imageLine
+		];
+
+		return lines.join('\n');
+	}
+
+	/**
+	 * Detect template type from filename and return template content
+	 */
+	private async getTemplateForFilename(basename: string): Promise<string | null> {
+		const lowerName = basename.toLowerCase();
+		const templatePaths = this.settings.importSettings.templatePaths;
+
+		let templatePath: string | null = null;
+
+		// Check for keywords in filename
+		if (lowerName.includes('how-to') || lowerName.includes('howto') || lowerName.includes('how to')) {
+			templatePath = templatePaths.howto;
+			this.logger.debug(`Detected How-To template for: ${basename}`);
+		} else if (lowerName.includes('procedure')) {
+			templatePath = templatePaths.procedure;
+			this.logger.debug(`Detected Procedure template for: ${basename}`);
+		} else if (lowerName.includes('runbook')) {
+			templatePath = templatePaths.runbook;
+			this.logger.debug(`Detected Runbook template for: ${basename}`);
+		}
+
+		if (!templatePath) {
+			this.logger.debug(`No template match for filename: ${basename}`);
+			return null;
+		}
+
+		// Try to read the template file
+		try {
+			const normalizedPath = normalizePath(templatePath);
+			if (await this.app.vault.adapter.exists(normalizedPath)) {
+				const content = await this.app.vault.adapter.read(normalizedPath);
+				return content;
+			} else {
+				this.logger.warn(`Template file not found: ${normalizedPath}`);
+				return null;
+			}
+		} catch (error) {
+			this.logger.error(`Failed to read template: ${templatePath}`, error);
+			return null;
+		}
+	}
+
+	/**
+	 * Remove Templater syntax from template content
+	 * Since we're not running Templater, we need to clean out the <% %> tags
+	 */
+	private cleanTemplaterSyntax(content: string): string {
+		// Remove Templater execution blocks <%* ... %>
+		content = content.replace(/<%\*[\s\S]*?%>/g, '');
+
+		// Replace simple output blocks <%= ... %> with placeholder text
+		content = content.replace(/<%=\s*tp\.file\.title\s*%>/g, '[Title]');
+		content = content.replace(/<%=\s*tp\.date\.now\([^)]*\)\s*%>/g, new Date().toISOString().split('T')[0]);
+
+		// Replace prompt blocks with placeholder
+		content = content.replace(/<%\s*tp\.system\.prompt\([^)]*\)\s*%>/g, '[Enter value]');
+		content = content.replace(/<%\s*tp\.system\.prompt\([^)]*,\s*"([^"]*)"\)\s*%>/g, '$1');
+
+		// Replace cursor blocks
+		content = content.replace(/<%\s*tp\.file\.cursor\([^)]*\)\s*%>/g, '');
+		content = content.replace(/<%\s*tp\.file\.cursor\(\)\s*%>/g, '');
+
+		// Replace user variables with placeholder
+		content = content.replace(/<%\s*tp\.user\.\w+\s*\?\?\s*"([^"]*)"\s*%>/g, '$1');
+
+		// Remove any remaining Templater blocks
+		content = content.replace(/<%[^%]*%>/g, '');
+
+		// Clean up any double blank lines created by removals
+		content = content.replace(/\n{3,}/g, '\n\n');
+
+		return content;
 	}
 }

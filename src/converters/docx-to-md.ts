@@ -65,6 +65,34 @@ export class DocxToMdConverter {
 	}
 
 	/**
+	 * Fix HTML table cells by removing <p> tags inside <td> and <th>
+	 * Turndown GFM plugin doesn't handle these well
+	 */
+	private fixHtmlTableCells(html: string): string {
+		// Replace <p>content</p> inside <td> with just content
+		html = html.replace(/<td([^>]*)>\s*<p>([^<]*)<\/p>\s*<\/td>/gi, '<td$1>$2</td>');
+
+		// Replace <p>content</p> inside <th> with just content
+		html = html.replace(/<th([^>]*)>\s*<p>([^<]*)<\/p>\s*<\/th>/gi, '<th$1>$2</th>');
+
+		// Handle empty cells
+		html = html.replace(/<td([^>]*)>\s*<\/td>/gi, '<td$1></td>');
+		html = html.replace(/<th([^>]*)>\s*<\/th>/gi, '<th$1></th>');
+
+		// Handle multiple <p> tags in a cell (join with space)
+		html = html.replace(/<td([^>]*)>((?:\s*<p>[^<]*<\/p>\s*)+)<\/td>/gi, (match, attrs, content) => {
+			const text = content.replace(/<\/?p>/gi, ' ').trim().replace(/\s+/g, ' ');
+			return `<td${attrs}>${text}</td>`;
+		});
+		html = html.replace(/<th([^>]*)>((?:\s*<p>[^<]*<\/p>\s*)+)<\/th>/gi, (match, attrs, content) => {
+			const text = content.replace(/<\/?p>/gi, ' ').trim().replace(/\s+/g, ' ');
+			return `<th${attrs}>${text}</th>`;
+		});
+
+		return html;
+	}
+
+	/**
 	 * Convert DOCX buffer to Markdown
 	 */
 	async convert(docxBuffer: ArrayBuffer, basename: string): Promise<DocxToMdResult> {
@@ -95,10 +123,13 @@ export class DocxToMdConverter {
 
 			let html = result.value;
 
-				// Log any conversion messages/warnings
+			// Log any conversion messages/warnings
 			if (result.messages.length > 0) {
 				this.log('warn', 'Mammoth conversion messages:', result.messages);
 			}
+
+			// Fix table cells - turndown GFM doesn't handle <p> inside <td>/<th> well
+			html = this.fixHtmlTableCells(html);
 
 			// Convert HTML to Markdown
 			this.log('info', 'Converting HTML to Markdown with Turndown...');
@@ -168,6 +199,9 @@ export class DocxToMdConverter {
 	 * Clean up converted markdown
 	 */
 	private cleanupMarkdown(markdown: string): string {
+		// Fix malformed tables (cells split across lines)
+		markdown = this.fixMalformedTables(markdown);
+
 		// Remove excessive blank lines (more than 2 consecutive)
 		markdown = markdown.replace(/\n{3,}/g, '\n\n');
 
@@ -181,6 +215,151 @@ export class DocxToMdConverter {
 		markdown = markdown.trim() + '\n';
 
 		return markdown;
+	}
+
+	/**
+	 * Fix malformed tables where cells are split across multiple lines
+	 */
+	private fixMalformedTables(markdown: string): string {
+		const lines = markdown.split('\n');
+		const result: string[] = [];
+		let inTable = false;
+		let tableBuffer: string[] = [];
+		let columnCount = 0;
+
+		for (let i = 0; i < lines.length; i++) {
+			const line = lines[i];
+			const trimmed = line.trim();
+
+			// Detect table separator - this tells us column count
+			if (/^\|[\s\-:|]+\|$/.test(trimmed)) {
+				// Count columns from separator
+				columnCount = (trimmed.match(/\|/g) || []).length - 1;
+
+				// Flush buffer as a row before separator
+				if (tableBuffer.length > 0) {
+					const row = this.reconstructTableRow(tableBuffer, columnCount);
+					if (row) result.push(row);
+					tableBuffer = [];
+				}
+				result.push(trimmed);
+				inTable = true;
+				continue;
+			}
+
+			// Detect start of a malformed table (line with partial pipe structure)
+			if (trimmed === '|' || /^\|\s*\w+\s*\|$/.test(trimmed) || /^\|\s*$/.test(trimmed)) {
+				inTable = true;
+				tableBuffer.push(trimmed);
+				continue;
+			}
+
+			if (inTable) {
+				// If it's a proper table row, output it directly
+				if (/^\|.+\|$/.test(trimmed) && (trimmed.match(/\|/g) || []).length > 2) {
+					// Flush any pending buffer first
+					if (tableBuffer.length > 0) {
+						const row = this.reconstructTableRow(tableBuffer, columnCount);
+						if (row) result.push(row);
+						tableBuffer = [];
+					}
+					result.push(trimmed);
+					continue;
+				}
+
+				// Empty line ends the table
+				if (trimmed === '') {
+					if (tableBuffer.length > 0) {
+						const row = this.reconstructTableRow(tableBuffer, columnCount);
+						if (row) result.push(row);
+						tableBuffer = [];
+					}
+					inTable = false;
+					result.push(line);
+					continue;
+				}
+
+				// Check if this looks like start of new non-table content
+				if (/^#{1,6}\s/.test(trimmed) || /^[-*]\s/.test(trimmed) || /^\d+\.\s/.test(trimmed)) {
+					// Flush buffer and exit table mode
+					if (tableBuffer.length > 0) {
+						const row = this.reconstructTableRow(tableBuffer, columnCount);
+						if (row) result.push(row);
+						tableBuffer = [];
+					}
+					inTable = false;
+					result.push(line);
+					continue;
+				}
+
+				// Accumulate anything else as potential cell content
+				tableBuffer.push(trimmed);
+			} else {
+				// Not in table - check if this starts a table
+				if (/^\|.*\|$/.test(trimmed)) {
+					// Count potential columns
+					const pipeCount = (trimmed.match(/\|/g) || []).length;
+					if (pipeCount > 2) {
+						result.push(line);
+						inTable = true;
+						columnCount = pipeCount - 1;
+					} else {
+						// Might be start of malformed table
+						inTable = true;
+						tableBuffer.push(trimmed);
+					}
+				} else {
+					result.push(line);
+				}
+			}
+		}
+
+		// Flush any remaining buffer
+		if (tableBuffer.length > 0) {
+			const row = this.reconstructTableRow(tableBuffer, columnCount);
+			if (row) result.push(row);
+		}
+
+		return result.join('\n');
+	}
+
+	/**
+	 * Reconstruct a table row from accumulated cell values
+	 */
+	private reconstructTableRow(buffer: string[], expectedColumns: number): string | null {
+		if (buffer.length === 0) return null;
+
+		// Extract cell values, handling various formats
+		const cells: string[] = [];
+
+		for (const item of buffer) {
+			// Remove pipe characters and split if there are internal pipes
+			const cleaned = item.replace(/^\||\|$/g, '').trim();
+
+			if (cleaned.includes('|')) {
+				// Multiple cells in one item
+				const parts = cleaned.split('|').map(s => s.trim()).filter(s => s.length > 0);
+				cells.push(...parts);
+			} else if (cleaned.length > 0 && cleaned !== '|') {
+				cells.push(cleaned);
+			}
+		}
+
+		if (cells.length === 0) return null;
+
+		// Pad or trim to expected column count if known
+		if (expectedColumns > 0) {
+			while (cells.length < expectedColumns) {
+				cells.push('');
+			}
+			if (cells.length > expectedColumns) {
+				// Too many cells - might need to combine some
+				// For now just truncate
+				cells.length = expectedColumns;
+			}
+		}
+
+		return '| ' + cells.join(' | ') + ' |';
 	}
 
 	/**
@@ -261,6 +440,10 @@ export class DocxToMdConverter {
 		// Skip if it's just a path without a command
 		if (/^[\/~][\w\/.-]+$/.test(trimmed) && !trimmed.includes(' ')) return false;
 
+		// Skip markdown table rows and separators
+		if (/^\|.*\|$/.test(trimmed)) return false;
+		if (/^\|[\s\-:|]+\|$/.test(trimmed)) return false;
+
 		// Strip common prompt characters (# $ > %) from the beginning
 		// But only if followed by a command, not if it's a markdown header
 		const promptMatch = trimmed.match(/^([#$>%]+)\s*(\S.*)/);
@@ -277,8 +460,22 @@ export class DocxToMdConverter {
 		const firstWord = trimmed.split(/[\s|;&]/)[0].replace(/^(sudo\s+)?/, '').toLowerCase();
 
 		// Check if it starts with a known CLI command
+		// But require more than just a single word - need arguments, flags, or operators
 		if (DocxToMdConverter.CLI_COMMANDS.has(firstWord)) {
-			return true;
+			// Single word alone is not enough - too many false positives
+			// Require at least: arguments, flags, pipes, redirects, etc.
+			const hasArguments = trimmed.includes(' ') && trimmed.split(/\s+/).length > 1;
+			const hasFlags = /\s-{1,2}[a-zA-Z]/.test(trimmed);
+			const hasOperators = /[|><;]/.test(trimmed);
+			const hasPath = /\/\w/.test(trimmed);
+			const hasUrl = /https?:/.test(trimmed);
+			const hasEquals = /\w=\w/.test(trimmed);
+
+			if (hasArguments || hasFlags || hasOperators || hasPath || hasUrl || hasEquals) {
+				return true;
+			}
+			// Single command word alone - not enough evidence
+			return false;
 		}
 
 		// Check for CLI patterns even without known commands

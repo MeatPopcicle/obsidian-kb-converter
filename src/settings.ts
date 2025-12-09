@@ -31,6 +31,19 @@ export interface ImportSettings {
 	createDocumentSubfolder: boolean;
 	// Image link format in markdown
 	imageLinkFormat: 'wikilink' | 'markdown-relative' | 'markdown-absolute';
+
+	// Source callout settings
+	insertSourceCallout: boolean;
+	sourceCalloutType: string;  // note, info, etc.
+	sourceCalloutTitle: string;
+
+	// Template auto-apply settings
+	autoApplyTemplate: boolean;
+	templatePaths: {
+		howto: string;
+		procedure: string;
+		runbook: string;
+	};
 }
 
 export interface KBConverterSettings {
@@ -65,7 +78,20 @@ export const DEFAULT_SETTINGS: KBConverterSettings = {
 		customAssetsPath: 'attachments',
 		assetsFolderName: '_assets',
 		createDocumentSubfolder: true,
-		imageLinkFormat: 'wikilink'
+		imageLinkFormat: 'wikilink',
+
+		// Source callout
+		insertSourceCallout: true,
+		sourceCalloutType: 'note',
+		sourceCalloutTitle: 'Source Document',
+
+		// Template auto-apply
+		autoApplyTemplate: false,
+		templatePaths: {
+			howto: '000 Workings/20 Templates/22 Professional/22.10 AMS Documentation/TPL - How-To.md',
+			procedure: '000 Workings/20 Templates/22 Professional/22.10 AMS Documentation/TPL - Procedure.md',
+			runbook: '000 Workings/20 Templates/22 Professional/22.10 AMS Documentation/TPL - Runbook.md'
+		}
 	},
 
 	calloutStyles: {
@@ -256,6 +282,105 @@ export class KBConverterSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					});
 			});
+
+		// Source Callout Settings
+		containerEl.createEl('h4', { text: 'Source Document Callout' });
+
+		new Setting(containerEl)
+			.setName('Insert source callout')
+			.setDesc('Add a callout indicating the original DOCX source file')
+			.addToggle(toggle => {
+				toggle
+					.setValue(this.plugin.settings.importSettings.insertSourceCallout)
+					.onChange(async (value) => {
+						this.plugin.settings.importSettings.insertSourceCallout = value;
+						await this.plugin.saveSettings();
+						this.display();
+					});
+			});
+
+		if (this.plugin.settings.importSettings.insertSourceCallout) {
+			new Setting(containerEl)
+				.setName('Callout type')
+				.setDesc('Type of callout to use (note, info, tip, etc.)')
+				.addText(text => {
+					text
+						.setPlaceholder('note')
+						.setValue(this.plugin.settings.importSettings.sourceCalloutType)
+						.onChange(async (value) => {
+							this.plugin.settings.importSettings.sourceCalloutType = value || 'note';
+							await this.plugin.saveSettings();
+						});
+					text.inputEl.style.width = '100px';
+				});
+
+			new Setting(containerEl)
+				.setName('Callout title')
+				.setDesc('Title for the source callout')
+				.addText(text => {
+					text
+						.setPlaceholder('Source Document')
+						.setValue(this.plugin.settings.importSettings.sourceCalloutTitle)
+						.onChange(async (value) => {
+							this.plugin.settings.importSettings.sourceCalloutTitle = value || 'Source Document';
+							await this.plugin.saveSettings();
+						});
+				});
+		}
+
+		// Template Auto-Apply Settings
+		containerEl.createEl('h4', { text: 'Template Auto-Apply' });
+
+		new Setting(containerEl)
+			.setName('Auto-apply template')
+			.setDesc('Automatically prepend template based on filename keywords (How-To, Procedure, Runbook)')
+			.addToggle(toggle => {
+				toggle
+					.setValue(this.plugin.settings.importSettings.autoApplyTemplate)
+					.onChange(async (value) => {
+						this.plugin.settings.importSettings.autoApplyTemplate = value;
+						await this.plugin.saveSettings();
+						this.display();
+					});
+			});
+
+		if (this.plugin.settings.importSettings.autoApplyTemplate) {
+			new Setting(containerEl)
+				.setName('How-To template path')
+				.setDesc('Path to How-To template (relative to vault root)')
+				.addText(text => {
+					text
+						.setValue(this.plugin.settings.importSettings.templatePaths.howto)
+						.onChange(async (value) => {
+							this.plugin.settings.importSettings.templatePaths.howto = value;
+							await this.plugin.saveSettings();
+						});
+				});
+
+			new Setting(containerEl)
+				.setName('Procedure template path')
+				.setDesc('Path to Procedure template (relative to vault root)')
+				.addText(text => {
+					text
+						.setValue(this.plugin.settings.importSettings.templatePaths.procedure)
+						.onChange(async (value) => {
+							this.plugin.settings.importSettings.templatePaths.procedure = value;
+							await this.plugin.saveSettings();
+						});
+				});
+
+			new Setting(containerEl)
+				.setName('Runbook template path')
+				.setDesc('Path to Runbook template (relative to vault root)')
+				.addText(text => {
+					text
+						.setValue(this.plugin.settings.importSettings.templatePaths.runbook)
+						.onChange(async (value) => {
+							this.plugin.settings.importSettings.templatePaths.runbook = value;
+							await this.plugin.saveSettings();
+						});
+				});
+		}
 
 		// Callout Styles
 		containerEl.createEl('h3', { text: 'Callout Styles' });
