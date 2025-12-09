@@ -21,7 +21,9 @@ export interface TableStyle {
 }
 
 export interface ImportSettings {
-	// Where to put extracted images
+	// Image handling mode
+	imageHandling: 'extract' | 'embed' | 'ignore';
+	// Where to put extracted images (only used when imageHandling is 'extract')
 	assetsLocation: 'subfolder' | 'same' | 'custom';
 	// Custom assets folder path (relative to vault root)
 	customAssetsPath: string;
@@ -31,6 +33,8 @@ export interface ImportSettings {
 	createDocumentSubfolder: boolean;
 	// Image link format in markdown
 	imageLinkFormat: 'wikilink' | 'markdown-relative' | 'markdown-absolute';
+	// Delete source DOCX after conversion
+	deleteSourceAfterConversion: boolean;
 
 	// Source callout settings
 	insertSourceCallout: boolean;
@@ -74,11 +78,13 @@ export const DEFAULT_SETTINGS: KBConverterSettings = {
 	customOutputPath: '',
 
 	importSettings: {
+		imageHandling: 'extract',
 		assetsLocation: 'subfolder',
 		customAssetsPath: 'attachments',
 		assetsFolderName: '_assets',
 		createDocumentSubfolder: true,
 		imageLinkFormat: 'wikilink',
+		deleteSourceAfterConversion: false,
 
 		// Source callout
 		insertSourceCallout: true,
@@ -209,79 +215,110 @@ export class KBConverterSettingTab extends PluginSettingTab {
 		containerEl.createEl('h3', { text: 'Import Settings (DOCX → Markdown)' });
 
 		new Setting(containerEl)
-			.setName('Assets location')
-			.setDesc('Where to save extracted images')
+			.setName('Delete source after conversion')
+			.setDesc('Automatically delete the DOCX file after converting to Markdown')
+			.addToggle(toggle => {
+				toggle
+					.setValue(this.plugin.settings.importSettings.deleteSourceAfterConversion)
+					.onChange(async (value) => {
+						this.plugin.settings.importSettings.deleteSourceAfterConversion = value;
+						await this.plugin.saveSettings();
+					});
+			});
+
+		new Setting(containerEl)
+			.setName('Image handling')
+			.setDesc('How to handle images in DOCX files')
 			.addDropdown(dropdown => {
 				dropdown
-					.addOption('subfolder', 'Subfolder next to markdown')
-					.addOption('same', 'Same folder as markdown')
-					.addOption('custom', 'Custom vault folder')
-					.setValue(this.plugin.settings.importSettings.assetsLocation)
-					.onChange(async (value: 'subfolder' | 'same' | 'custom') => {
-						this.plugin.settings.importSettings.assetsLocation = value;
+					.addOption('extract', 'Extract to files')
+					.addOption('embed', 'Embed as base64')
+					.addOption('ignore', 'Ignore images')
+					.setValue(this.plugin.settings.importSettings.imageHandling)
+					.onChange(async (value: 'extract' | 'embed' | 'ignore') => {
+						this.plugin.settings.importSettings.imageHandling = value;
 						await this.plugin.saveSettings();
 						this.display();
 					});
 			});
 
-		if (this.plugin.settings.importSettings.assetsLocation === 'subfolder') {
+		// Only show asset location settings when extracting images
+		if (this.plugin.settings.importSettings.imageHandling === 'extract') {
 			new Setting(containerEl)
-				.setName('Assets folder name')
-				.setDesc('Name of the assets folder (e.g., _assets, images, attachments)')
-				.addText(text => {
-					text
-						.setPlaceholder('_assets')
-						.setValue(this.plugin.settings.importSettings.assetsFolderName)
-						.onChange(async (value) => {
-							this.plugin.settings.importSettings.assetsFolderName = value || '_assets';
+				.setName('Assets location')
+				.setDesc('Where to save extracted images')
+				.addDropdown(dropdown => {
+					dropdown
+						.addOption('subfolder', 'Subfolder next to markdown')
+						.addOption('same', 'Same folder as markdown')
+						.addOption('custom', 'Custom vault folder')
+						.setValue(this.plugin.settings.importSettings.assetsLocation)
+						.onChange(async (value: 'subfolder' | 'same' | 'custom') => {
+							this.plugin.settings.importSettings.assetsLocation = value;
 							await this.plugin.saveSettings();
+							this.display();
 						});
 				});
-		}
 
-		if (this.plugin.settings.importSettings.assetsLocation === 'custom') {
-			new Setting(containerEl)
-				.setName('Custom assets path')
-				.setDesc('Path relative to vault root (e.g., attachments, media/images)')
-				.addText(text => {
-					text
-						.setPlaceholder('attachments')
-						.setValue(this.plugin.settings.importSettings.customAssetsPath)
-						.onChange(async (value) => {
-							this.plugin.settings.importSettings.customAssetsPath = value;
-							await this.plugin.saveSettings();
-						});
-				});
-		}
-
-		if (this.plugin.settings.importSettings.assetsLocation !== 'same') {
-			new Setting(containerEl)
-				.setName('Create document subfolder')
-				.setDesc('Create a subfolder for each document (e.g., _assets/MyDoc/image.png)')
-				.addToggle(toggle => {
-					toggle
-						.setValue(this.plugin.settings.importSettings.createDocumentSubfolder)
-						.onChange(async (value) => {
-							this.plugin.settings.importSettings.createDocumentSubfolder = value;
-							await this.plugin.saveSettings();
-						});
-				});
-		}
-
-		new Setting(containerEl)
-			.setName('Image link format')
-			.setDesc('Format for image links in converted markdown')
-			.addDropdown(dropdown => {
-				dropdown
-					.addOption('wikilink', 'Wiki-link: ![[image.png]]')
-					.addOption('markdown-relative', 'Markdown relative: ![](./path/image.png)')
-					.addOption('markdown-absolute', 'Markdown absolute: ![](/path/image.png)')
-					.setValue(this.plugin.settings.importSettings.imageLinkFormat)
-					.onChange(async (value: 'wikilink' | 'markdown-relative' | 'markdown-absolute') => {
-						this.plugin.settings.importSettings.imageLinkFormat = value;
-						await this.plugin.saveSettings();
+			if (this.plugin.settings.importSettings.assetsLocation === 'subfolder') {
+				new Setting(containerEl)
+					.setName('Assets folder name')
+					.setDesc('Name of the assets folder (e.g., _assets, images, attachments)')
+					.addText(text => {
+						text
+							.setPlaceholder('_assets')
+							.setValue(this.plugin.settings.importSettings.assetsFolderName)
+							.onChange(async (value) => {
+								this.plugin.settings.importSettings.assetsFolderName = value || '_assets';
+								await this.plugin.saveSettings();
+							});
 					});
-			});
+			}
+
+			if (this.plugin.settings.importSettings.assetsLocation === 'custom') {
+				new Setting(containerEl)
+					.setName('Custom assets path')
+					.setDesc('Path relative to vault root (e.g., attachments, media/images)')
+					.addText(text => {
+						text
+							.setPlaceholder('attachments')
+							.setValue(this.plugin.settings.importSettings.customAssetsPath)
+							.onChange(async (value) => {
+								this.plugin.settings.importSettings.customAssetsPath = value;
+								await this.plugin.saveSettings();
+							});
+					});
+			}
+
+			if (this.plugin.settings.importSettings.assetsLocation !== 'same') {
+				new Setting(containerEl)
+					.setName('Create document subfolder')
+					.setDesc('Create a subfolder for each document (e.g., _assets/MyDoc/image.png)')
+					.addToggle(toggle => {
+						toggle
+							.setValue(this.plugin.settings.importSettings.createDocumentSubfolder)
+							.onChange(async (value) => {
+								this.plugin.settings.importSettings.createDocumentSubfolder = value;
+								await this.plugin.saveSettings();
+							});
+					});
+			}
+
+			new Setting(containerEl)
+				.setName('Image link format')
+				.setDesc('Format for image links in converted markdown')
+				.addDropdown(dropdown => {
+					dropdown
+						.addOption('wikilink', 'Wiki-link: ![[image.png]]')
+						.addOption('markdown-relative', 'Markdown relative: ![](./path/image.png)')
+						.addOption('markdown-absolute', 'Markdown absolute: ![](/path/image.png)')
+						.setValue(this.plugin.settings.importSettings.imageLinkFormat)
+						.onChange(async (value: 'wikilink' | 'markdown-relative' | 'markdown-absolute') => {
+							this.plugin.settings.importSettings.imageLinkFormat = value;
+							await this.plugin.saveSettings();
+						});
+				});
+		}
 
 		// Source Callout Settings
 		containerEl.createEl('h4', { text: 'Source Document Callout' });

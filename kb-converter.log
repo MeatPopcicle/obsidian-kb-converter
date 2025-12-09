@@ -5,3 +5,352 @@
 [2025-12-09T03:51:59.925Z] [INFO] Conversion complete: 500 Work/_Inbox/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1.md
 [2025-12-09T14:19:26.989Z] [INFO] KB Converter plugin loading...
 [2025-12-09T14:19:26.990Z] [INFO] KB Converter plugin loaded successfully
+[2025-12-09T17:03:56.678Z] [INFO] KB Converter plugin loading...
+[2025-12-09T17:03:56.678Z] [INFO] KB Converter plugin loaded successfully
+[2025-12-09T17:22:05.488Z] [INFO] KB Converter plugin loading...
+[2025-12-09T17:22:05.488Z] [INFO] KB Converter plugin loaded successfully
+[2025-12-09T17:46:22.083Z] [INFO] Converting DOCX from vault: 500 Work/20 Clients/20 Higher Education/20.00 PARCC - UPENN/20.01.00 Engagement (Betty)/50 Knowledge Base/50.00 Ahead MS Documentation/_ahdMsDocs-50.04_Storage/AMS-HPC-STOR - PARCC - Runbook_v0.1.docx
+[2025-12-09T17:46:22.084Z] [DEBUG] Reading DOCX from vault...
+[2025-12-09T17:46:22.129Z] [DEBUG] File read complete, size: 35311 bytes
+[2025-12-09T17:46:22.129Z] [INFO] Starting conversion of AMS-HPC-STOR - PARCC - Runbook_v0.1
+[2025-12-09T17:46:22.129Z] [DEBUG] Buffer size: 35311 bytes
+[2025-12-09T17:46:22.129Z] [DEBUG] Converted to Buffer, size: 35311
+[2025-12-09T17:46:22.129Z] [INFO] Calling mammoth.convertToHtml...
+[2025-12-09T17:46:22.225Z] [INFO] Mammoth conversion complete, HTML length: 7268
+[2025-12-09T17:46:22.225Z] [WARN] Mammoth conversion messages:
+  Data: [
+  {
+    "type": "warning",
+    "message": "Unrecognised paragraph style: 'First Paragraph' (Style ID: FirstParagraph)"
+  },
+  {
+    "type": "warning",
+    "message": "Unrecognised paragraph style: 'Body Text' (Style ID: BodyText)"
+  },
+  {
+    "type": "warning",
+    "message": "Unrecognised paragraph style: 'Compact' (Style ID: Compact)"
+  }
+]
+[2025-12-09T17:46:22.225Z] [INFO] Converting HTML to Markdown with Turndown...
+[2025-12-09T17:46:22.245Z] [DEBUG] Markdown length: 6219
+[2025-12-09T17:46:22.246Z] [INFO] Processing 0 images...
+[2025-12-09T17:46:22.247Z] [INFO] Detected and formatted 7 CLI commands
+[2025-12-09T17:46:22.247Z] [INFO] Conversion complete. Final markdown length: 6264
+[2025-12-09T17:46:22.247Z] [INFO] Saving conversion result for AMS-HPC-STOR - PARCC - Runbook_v0.1
+[2025-12-09T17:46:22.248Z] [DEBUG] Assets folder: 500 Work/20 Clients/20 Higher Education/20.00 PARCC - UPENN/20.01.00 Engagement (Betty)/50 Knowledge Base/50.00 Ahead MS Documentation/_ahdMsDocs-50.04_Storage/_assets/AMS-HPC-STOR - PARCC - Runbook_v0.1
+[2025-12-09T17:46:22.248Z] [DEBUG] Inserted source callout
+[2025-12-09T17:46:22.248Z] [INFO] Saving markdown to 500 Work/20 Clients/20 Higher Education/20.00 PARCC - UPENN/20.01.00 Engagement (Betty)/50 Knowledge Base/50.00 Ahead MS Documentation/_ahdMsDocs-50.04_Storage/AMS-HPC-STOR - PARCC - Runbook_v0.1.md
+
+[2025-12-09T17:46:22.480Z] [INFO] Conversion complete: 500 Work/20 Clients/20 Higher Education/20.00 PARCC - UPENN/20.01.00 Engagement (Betty)/50 Knowledge Base/50.00 Ahead MS Documentation/_ahdMsDocs-50.04_Storage/AMS-HPC-STOR - PARCC - Runbook_v0.1.md
+[2025-12-09T17:48:10.395Z] [INFO] KB Converter plugin loading...
+[2025-12-09T17:48:10.395Z] [INFO] KB Converter plugin loaded successfully
+[2025-12-09T17:54:17.916Z] [INFO] KB Converter plugin loading...
+[2025-12-09T17:54:17.916Z] [INFO] KB Converter plugin loaded successfully
+[2025-12-09T17:54:33.216Z] [INFO] Converting DOCX from vault: 500 Work/20 Clients/20 Higher Education/20.00 PARCC - UPENN/20.01.00 Engagement (Betty)/50 Knowledge Base/50.00 Ahead MS Documentation/_ahdMsDocs-50.04_Storage/AMS-HPC-STOR - PARCC - Runbook_v0.1.docx
+[2025-12-09T17:54:33.216Z] [DEBUG] Reading DOCX from vault...
+[2025-12-09T17:54:33.259Z] [DEBUG] File read complete, size: 35311 bytes
+[2025-12-09T17:54:33.259Z] [INFO] Starting conversion of AMS-HPC-STOR - PARCC - Runbook_v0.1
+[2025-12-09T17:54:33.259Z] [DEBUG] Buffer size: 35311 bytes
+[2025-12-09T17:54:33.259Z] [DEBUG] Converted to Buffer, size: 35311
+[2025-12-09T17:54:33.259Z] [INFO] Calling mammoth.convertToHtml...
+[2025-12-09T17:54:33.318Z] [INFO] Mammoth conversion complete, HTML length: 7268
+[2025-12-09T17:54:33.318Z] [WARN] Mammoth conversion messages:
+  Data: [
+  {
+    "type": "warning",
+    "message": "Unrecognised paragraph style: 'First Paragraph' (Style ID: FirstParagraph)"
+  },
+  {
+    "type": "warning",
+    "message": "Unrecognised paragraph style: 'Body Text' (Style ID: BodyText)"
+  },
+  {
+    "type": "warning",
+    "message": "Unrecognised paragraph style: 'Compact' (Style ID: Compact)"
+  }
+]
+[2025-12-09T17:54:33.318Z] [INFO] Converting HTML to Markdown with Turndown...
+[2025-12-09T17:54:33.323Z] [DEBUG] Markdown length: 6219
+[2025-12-09T17:54:33.323Z] [INFO] Processing 0 images...
+[2025-12-09T17:54:33.324Z] [INFO] Detected and formatted 7 CLI commands
+[2025-12-09T17:54:33.325Z] [INFO] Conversion complete. Final markdown length: 6264
+[2025-12-09T17:54:33.325Z] [INFO] Saving conversion result for AMS-HPC-STOR - PARCC - Runbook_v0.1
+[2025-12-09T17:54:33.325Z] [DEBUG] Assets folder: 500 Work/20 Clients/20 Higher Education/20.00 PARCC - UPENN/20.01.00 Engagement (Betty)/50 Knowledge Base/50.00 Ahead MS Documentation/_ahdMsDocs-50.04_Storage/_assets/AMS-HPC-STOR - PARCC - Runbook_v0.1
+[2025-12-09T17:54:33.325Z] [DEBUG] Inserted source callout
+[2025-12-09T17:54:33.325Z] [INFO] Saving markdown to 500 Work/20 Clients/20 Higher Education/20.00 PARCC - UPENN/20.01.00 Engagement (Betty)/50 Knowledge Base/50.00 Ahead MS Documentation/_ahdMsDocs-50.04_Storage/AMS-HPC-STOR - PARCC - Runbook_v0.1.md
+
+[2025-12-09T17:54:33.490Z] [INFO] Conversion complete: 500 Work/20 Clients/20 Higher Education/20.00 PARCC - UPENN/20.01.00 Engagement (Betty)/50 Knowledge Base/50.00 Ahead MS Documentation/_ahdMsDocs-50.04_Storage/AMS-HPC-STOR - PARCC - Runbook_v0.1.md
+[2025-12-09T17:54:59.718Z] [INFO] Converting DOCX from vault: 500 Work/_Inbox/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1.docx
+[2025-12-09T17:54:59.718Z] [DEBUG] Reading DOCX from vault...
+[2025-12-09T17:54:59.786Z] [DEBUG] File read complete, size: 604049 bytes
+[2025-12-09T17:54:59.787Z] [INFO] Starting conversion of AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T17:54:59.787Z] [DEBUG] Buffer size: 604049 bytes
+[2025-12-09T17:54:59.787Z] [DEBUG] Converted to Buffer, size: 604049
+[2025-12-09T17:54:59.787Z] [INFO] Calling mammoth.convertToHtml...
+
+
+[2025-12-09T17:55:02.783Z] [DEBUG] Created assets folder: 500 Work/_Inbox/_assets/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T17:55:02.786Z] [DEBUG] Saved image: 500 Work/_Inbox/_assets/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-01.png
+
+
+
+
+[2025-12-09T17:55:03.358Z] [INFO] Conversion complete: 500 Work/_Inbox/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1.md
+[2025-12-09T18:04:57.508Z] [INFO] Converting DOCX from vault: 500 Work/_Inbox/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1.docx
+[2025-12-09T18:04:57.509Z] [DEBUG] Reading DOCX from vault...
+[2025-12-09T18:04:57.543Z] [DEBUG] File read complete, size: 604049 bytes
+[2025-12-09T18:04:57.544Z] [INFO] Starting conversion of AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T18:04:57.544Z] [DEBUG] Buffer size: 604049 bytes
+[2025-12-09T18:04:57.544Z] [DEBUG] Converted to Buffer, size: 604049
+[2025-12-09T18:04:57.544Z] [INFO] Calling mammoth.convertToHtml...
+
+
+[2025-12-09T18:04:59.107Z] [DEBUG] Created assets folder: 500 Work/_Inbox/_assets/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T18:04:59.110Z] [DEBUG] Saved image: 500 Work/_Inbox/_assets/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-01.png
+
+
+
+
+[2025-12-09T18:04:59.609Z] [INFO] Conversion complete: 500 Work/_Inbox/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1.md
+[2025-12-09T18:07:32.524Z] [INFO] KB Converter plugin loading...
+[2025-12-09T18:07:32.524Z] [INFO] KB Converter plugin loaded successfully
+[2025-12-09T18:08:06.212Z] [INFO] Converting DOCX from vault: 500 Work/_Inbox/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1.docx
+[2025-12-09T18:08:06.212Z] [DEBUG] Reading DOCX from vault...
+[2025-12-09T18:08:06.237Z] [DEBUG] File read complete, size: 604049 bytes
+[2025-12-09T18:08:06.237Z] [INFO] Starting conversion of AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T18:08:06.238Z] [DEBUG] Buffer size: 604049 bytes
+[2025-12-09T18:08:06.238Z] [DEBUG] Converted to Buffer, size: 604049
+[2025-12-09T18:08:06.238Z] [INFO] Calling mammoth.convertToHtml...
+
+[2025-12-09T18:08:06.294Z] [INFO] Mammoth conversion complete, HTML length: 3068
+[2025-12-09T18:08:06.294Z] [WARN] Mammoth conversion messages:
+  Data: [
+  {
+    "type": "warning",
+    "message": "Unrecognised paragraph style: 'Body Text' (Style ID: BodyText)"
+  },
+  {
+    "type": "warning",
+    "message": "Unrecognised paragraph style: 'Compact' (Style ID: Compact)"
+  }
+]
+[2025-12-09T18:08:06.294Z] [INFO] Converting HTML to Markdown with Turndown...
+[2025-12-09T18:08:06.297Z] [DEBUG] Markdown length: 2392
+[2025-12-09T18:08:06.297Z] [INFO] Processing 4 images...
+[2025-12-09T18:08:06.297Z] [DEBUG] Replaced placeholder for image: AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-01.png
+[2025-12-09T18:08:06.297Z] [DEBUG] Replaced placeholder for image: AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-02.png
+[2025-12-09T18:08:06.297Z] [DEBUG] Replaced placeholder for image: AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-03.png
+[2025-12-09T18:08:06.297Z] [DEBUG] Replaced placeholder for image: AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-04.png
+[2025-12-09T18:08:06.298Z] [INFO] Detected and formatted 4 CLI commands
+[2025-12-09T18:08:06.298Z] [INFO] Conversion complete. Final markdown length: 2623
+[2025-12-09T18:08:06.299Z] [INFO] Saving conversion result for AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T18:08:06.299Z] [DEBUG] Assets folder: 500 Work/_Inbox/_assets/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T18:08:06.299Z] [INFO] Saving 4 images to 500 Work/_Inbox/_assets/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T18:08:06.305Z] [DEBUG] Created assets folder: 500 Work/_Inbox/_assets/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T18:08:06.307Z] [DEBUG] Saved image: 500 Work/_Inbox/_assets/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-01.png
+
+
+
+
+[2025-12-09T18:08:06.607Z] [INFO] Conversion complete: 500 Work/_Inbox/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1.md
+[2025-12-09T18:12:59.986Z] [INFO] KB Converter plugin loading...
+[2025-12-09T18:12:59.987Z] [INFO] KB Converter plugin loaded successfully
+[2025-12-09T18:13:14.769Z] [INFO] Converting DOCX from vault: 500 Work/_Inbox/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1.docx
+[2025-12-09T18:13:14.769Z] [DEBUG] Reading DOCX from vault...
+[2025-12-09T18:13:14.804Z] [DEBUG] File read complete, size: 604049 bytes
+[2025-12-09T18:13:14.804Z] [INFO] Starting conversion of AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T18:13:14.804Z] [DEBUG] Buffer size: 604049 bytes
+[2025-12-09T18:13:14.805Z] [DEBUG] Converted to Buffer, size: 604049
+[2025-12-09T18:13:14.805Z] [INFO] Calling mammoth.convertToHtml...
+
+
+[2025-12-09T18:13:18.146Z] [DEBUG] Saved image: 500 Work/_Inbox/_assets/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-02.png
+
+
+
+[2025-12-09T18:13:18.427Z] [INFO] Conversion complete: 500 Work/_Inbox/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1.md
+[2025-12-09T18:18:23.131Z] [INFO] Converting DOCX from vault: 500 Work/_Inbox/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1.docx
+[2025-12-09T18:18:23.132Z] [DEBUG] Reading DOCX from vault...
+[2025-12-09T18:18:23.157Z] [DEBUG] File read complete, size: 604049 bytes
+[2025-12-09T18:18:23.157Z] [INFO] Starting conversion of AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T18:18:23.157Z] [DEBUG] Buffer size: 604049 bytes
+[2025-12-09T18:18:23.157Z] [DEBUG] Converted to Buffer, size: 604049
+[2025-12-09T18:18:23.157Z] [INFO] Calling mammoth.convertToHtml...
+
+[2025-12-09T18:18:23.205Z] [INFO] Mammoth conversion complete, HTML length: 3068
+[2025-12-09T18:18:23.205Z] [WARN] Mammoth conversion messages:
+  Data: [
+  {
+    "type": "warning",
+    "message": "Unrecognised paragraph style: 'Body Text' (Style ID: BodyText)"
+  },
+  {
+    "type": "warning",
+    "message": "Unrecognised paragraph style: 'Compact' (Style ID: Compact)"
+  }
+]
+[2025-12-09T18:18:23.205Z] [INFO] Converting HTML to Markdown with Turndown...
+[2025-12-09T18:18:23.207Z] [DEBUG] Markdown length: 2392
+[2025-12-09T18:18:23.207Z] [INFO] Processing 4 images...
+[2025-12-09T18:18:23.207Z] [DEBUG] Replaced placeholder for image: AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-01.png
+[2025-12-09T18:18:23.207Z] [DEBUG] Replaced placeholder for image: AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-02.png
+[2025-12-09T18:18:23.207Z] [DEBUG] Replaced placeholder for image: AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-03.png
+[2025-12-09T18:18:23.207Z] [DEBUG] Replaced placeholder for image: AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-04.png
+[2025-12-09T18:18:23.207Z] [INFO] Detected and formatted 3 CLI commands
+[2025-12-09T18:18:23.207Z] [INFO] Conversion complete. Final markdown length: 2620
+[2025-12-09T18:18:23.207Z] [INFO] Saving conversion result for AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T18:18:23.207Z] [DEBUG] Assets folder: 500 Work/_Inbox/_assets/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T18:18:23.207Z] [INFO] Saving 4 images to 500 Work/_Inbox/_assets/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T18:18:23.215Z] [DEBUG] Saved image: 500 Work/_Inbox/_assets/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-02.png
+
+
+
+[2025-12-09T18:18:23.705Z] [INFO] Conversion complete: 500 Work/_Inbox/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1.md
+[2025-12-09T18:23:50.566Z] [INFO] KB Converter plugin loading...
+[2025-12-09T18:23:50.566Z] [INFO] KB Converter plugin loaded successfully
+[2025-12-09T18:23:59.960Z] [INFO] Converting DOCX from vault: 500 Work/_Inbox/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1.docx
+[2025-12-09T18:23:59.961Z] [DEBUG] Reading DOCX from vault...
+[2025-12-09T18:23:59.987Z] [DEBUG] File read complete, size: 604049 bytes
+[2025-12-09T18:23:59.987Z] [INFO] Starting conversion of AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T18:23:59.987Z] [DEBUG] Buffer size: 604049 bytes
+[2025-12-09T18:23:59.987Z] [DEBUG] Converted to Buffer, size: 604049
+[2025-12-09T18:23:59.987Z] [INFO] Calling mammoth.convertToHtml...
+
+[2025-12-09T18:24:00.039Z] [INFO] Mammoth conversion complete, HTML length: 3068
+[2025-12-09T18:24:00.039Z] [WARN] Mammoth conversion messages:
+  Data: [
+  {
+    "type": "warning",
+    "message": "Unrecognised paragraph style: 'Body Text' (Style ID: BodyText)"
+  },
+  {
+    "type": "warning",
+    "message": "Unrecognised paragraph style: 'Compact' (Style ID: Compact)"
+  }
+]
+[2025-12-09T18:24:00.039Z] [INFO] Converting HTML to Markdown with Turndown...
+[2025-12-09T18:24:00.042Z] [DEBUG] Markdown length: 2357
+[2025-12-09T18:24:00.042Z] [INFO] Processing 4 images...
+[2025-12-09T18:24:00.042Z] [DEBUG] Replaced placeholder for image: AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-01.png
+[2025-12-09T18:24:00.042Z] [DEBUG] Replaced placeholder for image: AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-02.png
+[2025-12-09T18:24:00.042Z] [DEBUG] Replaced placeholder for image: AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-03.png
+[2025-12-09T18:24:00.042Z] [DEBUG] Replaced placeholder for image: AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-04.png
+[2025-12-09T18:24:00.043Z] [INFO] Detected and formatted 3 CLI commands
+[2025-12-09T18:24:00.043Z] [INFO] Conversion complete. Final markdown length: 2626
+[2025-12-09T18:24:00.043Z] [INFO] Saving conversion result for AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T18:24:00.043Z] [DEBUG] Assets folder: 500 Work/_Inbox/_assets/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T18:24:00.043Z] [INFO] Saving 4 images to 500 Work/_Inbox/_assets/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T18:24:00.050Z] [DEBUG] Saved image: 500 Work/_Inbox/_assets/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-02.png
+
+
+
+[2025-12-09T18:24:00.269Z] [INFO] Conversion complete: 500 Work/_Inbox/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1.md
+[2025-12-09T18:56:00.804Z] [INFO] KB Converter plugin loading...
+[2025-12-09T18:56:00.804Z] [INFO] KB Converter plugin loaded successfully
+[2025-12-09T18:57:30.975Z] [INFO] KB Converter plugin loading...
+[2025-12-09T18:57:30.976Z] [INFO] KB Converter plugin loaded successfully
+[2025-12-09T19:00:28.533Z] [INFO] KB Converter plugin loading...
+[2025-12-09T19:00:28.547Z] [INFO] KB Converter plugin loaded successfully
+[2025-12-09T19:01:31.170Z] [INFO] KB Converter plugin loading...
+[2025-12-09T19:01:31.171Z] [INFO] KB Converter plugin loaded successfully
+[2025-12-09T19:02:34.543Z] [INFO] KB Converter plugin loading...
+[2025-12-09T19:02:34.543Z] [INFO] KB Converter plugin loaded successfully
+[2025-12-09T19:05:46.399Z] [INFO] KB Converter plugin loading...
+[2025-12-09T19:05:46.400Z] [INFO] KB Converter plugin loaded successfully
+[2025-12-09T19:08:04.673Z] [INFO] KB Converter plugin loading...
+[2025-12-09T19:08:04.673Z] [INFO] KB Converter plugin loaded successfully
+[2025-12-09T19:09:42.359Z] [INFO] KB Converter plugin loading...
+[2025-12-09T19:09:42.360Z] [INFO] KB Converter plugin loaded successfully
+[2025-12-09T19:09:50.101Z] [INFO] KB Converter plugin loading...
+[2025-12-09T19:09:50.101Z] [INFO] KB Converter plugin loaded successfully
+[2025-12-09T19:11:12.896Z] [INFO] KB Converter plugin loading...
+[2025-12-09T19:11:12.897Z] [INFO] KB Converter plugin loaded successfully
+[2025-12-09T19:11:20.816Z] [INFO] KB Converter plugin loading...
+[2025-12-09T19:11:20.817Z] [INFO] KB Converter plugin loaded successfully
+[2025-12-09T19:11:52.332Z] [INFO] Converting DOCX from vault: 500 Work/_Inbox/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1.docx
+[2025-12-09T19:11:52.332Z] [DEBUG] Reading DOCX from vault...
+[2025-12-09T19:11:52.335Z] [DEBUG] File read complete, size: 604049 bytes
+[2025-12-09T19:11:52.336Z] [INFO] Starting conversion of AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T19:11:52.336Z] [DEBUG] Buffer size: 604049 bytes
+[2025-12-09T19:11:52.336Z] [DEBUG] Converted to Buffer, size: 604049
+[2025-12-09T19:11:52.336Z] [INFO] Calling mammoth.convertToHtml...
+
+[2025-12-09T19:11:52.414Z] [INFO] Mammoth conversion complete, HTML length: 3068
+[2025-12-09T19:11:52.415Z] [WARN] Mammoth conversion messages:
+  Data: [
+  {
+    "type": "warning",
+    "message": "Unrecognised paragraph style: 'Body Text' (Style ID: BodyText)"
+  },
+  {
+    "type": "warning",
+    "message": "Unrecognised paragraph style: 'Compact' (Style ID: Compact)"
+  }
+]
+[2025-12-09T19:11:52.415Z] [INFO] Converting HTML to Markdown with Turndown...
+[2025-12-09T19:11:52.419Z] [DEBUG] Markdown length: 2357
+[2025-12-09T19:11:52.419Z] [INFO] Processing 4 images...
+[2025-12-09T19:11:52.419Z] [DEBUG] Replaced placeholder for image: AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-01.png
+[2025-12-09T19:11:52.419Z] [DEBUG] Replaced placeholder for image: AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-02.png
+[2025-12-09T19:11:52.419Z] [DEBUG] Replaced placeholder for image: AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-03.png
+[2025-12-09T19:11:52.419Z] [DEBUG] Replaced placeholder for image: AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-04.png
+[2025-12-09T19:11:52.421Z] [INFO] Detected and formatted 3 CLI commands
+[2025-12-09T19:11:52.421Z] [INFO] Conversion complete. Final markdown length: 2626
+[2025-12-09T19:11:52.421Z] [INFO] Saving conversion result for AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T19:11:52.421Z] [DEBUG] Assets folder: 500 Work/_Inbox/_assets/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T19:11:52.421Z] [INFO] Saving 4 images to 500 Work/_Inbox/_assets/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T19:11:52.429Z] [DEBUG] Created assets folder: 500 Work/_Inbox/_assets/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T19:11:52.433Z] [DEBUG] Saved image: 500 Work/_Inbox/_assets/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-01.png
+
+
+
+
+[2025-12-09T19:11:52.705Z] [INFO] Conversion complete: 500 Work/_Inbox/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1.md
+[2025-12-09T19:18:14.517Z] [INFO] KB Converter plugin loading...
+[2025-12-09T19:18:14.518Z] [INFO] KB Converter plugin loaded successfully
+[2025-12-09T19:19:02.412Z] [INFO] Converting DOCX from vault: 500 Work/_Inbox/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1.docx
+[2025-12-09T19:19:02.413Z] [DEBUG] Reading DOCX from vault...
+[2025-12-09T19:19:02.416Z] [DEBUG] File read complete, size: 604049 bytes
+[2025-12-09T19:19:02.417Z] [INFO] Starting conversion of AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1 (image handling: extract)
+[2025-12-09T19:19:02.417Z] [DEBUG] Buffer size: 604049 bytes
+[2025-12-09T19:19:02.417Z] [DEBUG] Converted to Buffer, size: 604049
+[2025-12-09T19:19:02.417Z] [INFO] Calling mammoth.convertToHtml...
+
+
+[2025-12-09T19:19:06.222Z] [DEBUG] Saved image: 500 Work/_Inbox/_assets/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1-image-02.png
+
+
+
+
+
+[2025-12-09T19:19:31.046Z] [INFO] Converting DOCX from vault: 500 Work/_Inbox/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1.docx
+[2025-12-09T19:19:31.046Z] [DEBUG] Reading DOCX from vault...
+[2025-12-09T19:19:31.049Z] [DEBUG] File read complete, size: 604049 bytes
+[2025-12-09T19:19:31.049Z] [INFO] Starting conversion of AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1 (image handling: embed)
+[2025-12-09T19:19:31.049Z] [DEBUG] Buffer size: 604049 bytes
+[2025-12-09T19:19:31.049Z] [DEBUG] Converted to Buffer, size: 604049
+[2025-12-09T19:19:31.049Z] [INFO] Calling mammoth.convertToHtml...
+
+[2025-12-09T19:19:31.106Z] [INFO] Mammoth conversion complete, HTML length: 761980
+[2025-12-09T19:19:31.106Z] [WARN] Mammoth conversion messages:
+  Data: [
+  {
+    "type": "warning",
+    "message": "Unrecognised paragraph style: 'Body Text' (Style ID: BodyText)"
+  },
+  {
+    "type": "warning",
+    "message": "Unrecognised paragraph style: 'Compact' (Style ID: Compact)"
+  }
+]
+[2025-12-09T19:19:31.109Z] [INFO] Converting HTML to Markdown with Turndown...
+[2025-12-09T19:19:31.124Z] [DEBUG] Markdown length: 761269
+[2025-12-09T19:19:31.124Z] [INFO] Processing 0 images...
+[2025-12-09T19:19:31.130Z] [INFO] Detected and formatted 3 CLI commands
+[2025-12-09T19:19:31.131Z] [INFO] Conversion complete. Final markdown length: 761306
+[2025-12-09T19:19:31.131Z] [INFO] Saving conversion result for AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T19:19:31.131Z] [DEBUG] Assets folder: 500 Work/_Inbox/_assets/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1
+[2025-12-09T19:19:31.131Z] [DEBUG] Inserted source callout
+[2025-12-09T19:19:31.131Z] [INFO] Saving markdown to 500 Work/_Inbox/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1.md
+[2025-12-09T19:19:31.866Z] [INFO] Conversion complete: 500 Work/_Inbox/AMS-HPC-COMP - PARCC - HowTo - log Export from redfish 1.md

@@ -23,6 +23,7 @@ export class DocxToMdConverter {
 	private imageCounter = 0;
 	private docBasename = 'document';
 	private logger: Logger | null = null;
+	private imageHandling: 'extract' | 'embed' | 'ignore' = 'extract';
 
 	constructor(logger?: Logger) {
 		this.logger = logger || null;
@@ -43,12 +44,19 @@ export class DocxToMdConverter {
 				const src = img.getAttribute('src') || '';
 				const alt = img.getAttribute('alt') || '';
 
-				// If it's a data URL or extracted image, use our renamed filename
-				if (src.startsWith('data:') || src.includes('image')) {
-					// The actual filename will be set during image extraction
-					// For now, use a placeholder that we'll replace later
-					const placeholder = `__IMAGE_${this.imageCounter}__`;
-					return `![[${placeholder}]]`;
+				// Empty src means image was ignored
+				if (!src) {
+					return alt ? `[Image: ${alt}]` : '';
+				}
+
+				// If it's a base64 data URL (embed mode), use standard markdown
+				if (src.startsWith('data:')) {
+					return `![${alt}](${src})`;
+				}
+
+				// If it's a placeholder (extract mode), use wiki-link format
+				if (src.startsWith('__IMAGE_')) {
+					return `![[${src}]]`;
 				}
 
 				return `![[${src}]]`;
@@ -95,12 +103,17 @@ export class DocxToMdConverter {
 	/**
 	 * Convert DOCX buffer to Markdown
 	 */
-	async convert(docxBuffer: ArrayBuffer, basename: string): Promise<DocxToMdResult> {
+	async convert(
+		docxBuffer: ArrayBuffer,
+		basename: string,
+		imageHandling: 'extract' | 'embed' | 'ignore' = 'extract'
+	): Promise<DocxToMdResult> {
 		this.images = [];
 		this.imageCounter = 0;
 		this.docBasename = basename;
+		this.imageHandling = imageHandling;
 
-		this.log('info', `Starting conversion of ${basename}`);
+		this.log('info', `Starting conversion of ${basename} (image handling: ${imageHandling})`);
 		this.log('debug', `Buffer size: ${docxBuffer.byteLength} bytes`);
 
 		try {
@@ -108,15 +121,25 @@ export class DocxToMdConverter {
 			const buffer = Buffer.from(docxBuffer);
 			this.log('debug', `Converted to Buffer, size: ${buffer.length}`);
 
+			// Set up mammoth options based on image handling mode
+			const mammothOptions: any = {};
+			if (imageHandling === 'ignore') {
+				// Don't convert images at all
+				mammothOptions.convertImage = mammoth.images.imgElement(() => {
+					return Promise.resolve({ src: '' });
+				});
+			} else {
+				// Extract or embed images
+				mammothOptions.convertImage = mammoth.images.imgElement((image: any) => {
+					return this.extractImage(image);
+				});
+			}
+
 			// Convert DOCX to HTML using mammoth
 			this.log('info', 'Calling mammoth.convertToHtml...');
 			const result = await mammoth.convertToHtml(
-				{ buffer: buffer },  // Use buffer instead of arrayBuffer
-				{
-					convertImage: mammoth.images.imgElement((image) => {
-						return this.extractImage(image);
-					})
-				}
+				{ buffer: buffer },
+				mammothOptions
 			);
 
 			this.log('info', `Mammoth conversion complete, HTML length: ${result.value.length}`);
@@ -159,7 +182,7 @@ export class DocxToMdConverter {
 	}
 
 	/**
-	 * Extract image from DOCX and store for later saving
+	 * Extract image from DOCX and store for later saving (or embed as base64)
 	 */
 	private async extractImage(image: any): Promise<{ src: string }> {
 		const imageIndex = this.imageCounter++;
@@ -168,6 +191,14 @@ export class DocxToMdConverter {
 			const buffer = await image.readAsArrayBuffer();
 			const contentType = image.contentType || 'image/png';
 
+			// If embedding, return base64 data URL directly
+			if (this.imageHandling === 'embed') {
+				const base64 = Buffer.from(buffer).toString('base64');
+				const dataUrl = `data:${contentType};base64,${base64}`;
+				return { src: dataUrl };
+			}
+
+			// For 'extract' mode, store image for later saving
 			// Determine extension from content type
 			let ext = '.png';
 			if (contentType.includes('jpeg') || contentType.includes('jpg')) {

@@ -4,3 +4,69 @@
 .kb-converter-settings h3 {
     margin-top: 1.5em;
 }
+
+/* DOCX Preview Styles */
+.docx-preview-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--background-modifier-border);
+    background: var(--background-secondary);
+}
+
+.docx-preview-btn {
+    padding: 6px 14px;
+    border-radius: 4px;
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 0.1s ease;
+}
+
+.docx-preview-btn:hover {
+    background: var(--interactive-accent-hover);
+}
+
+.docx-preview-btn-secondary {
+    background: var(--background-modifier-border);
+    color: var(--text-normal);
+}
+
+.docx-preview-btn-secondary:hover {
+    background: var(--background-modifier-hover);
+}
+
+.docx-preview-container {
+    overflow: auto;
+    height: calc(100% - 50px);
+    padding: 16px;
+    background: var(--background-primary);
+}
+
+.docx-preview-body {
+    max-width: 100%;
+}
+
+.docx-preview-error {
+    padding: 20px;
+    color: var(--text-error);
+    font-style: italic;
+}
+
+/* Override all docx-preview wrapper backgrounds */
+.docx-wrapper,
+.docx-wrapper > *:not(article):not(section) {
+    padding: 0 !important;
+    background: var(--background-primary) !important;
+    background-color: var(--background-primary) !important;
+}
+
+.docx-wrapper article,
+.docx-wrapper section {
+    user-select: text;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}

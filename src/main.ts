@@ -5,6 +5,7 @@ import { DocxGenerator } from './generators/docx-generator';
 import { VaultImageResolver } from './utils/image-resolver';
 import { DocxToMdConverter } from './converters/docx-to-md';
 import { Logger } from './utils/logger';
+import { DocxView, DOCX_VIEW_TYPE } from './views/docx-view';
 
 export default class KBConverterPlugin extends Plugin {
 	settings: KBConverterSettings;
@@ -16,6 +17,12 @@ export default class KBConverterPlugin extends Plugin {
 		// Initialize logger
 		this.logger = new Logger(this.app);
 		this.logger.info('KB Converter plugin loading...');
+
+		// Register the DOCX view for inline preview
+		this.registerView(DOCX_VIEW_TYPE, (leaf) => new DocxView(leaf, this));
+
+		// Register .docx extension to use our view
+		this.registerExtensions(['docx'], DOCX_VIEW_TYPE);
 
 		// Add command: Export current note to DOCX
 		this.addCommand({
@@ -211,10 +218,17 @@ export default class KBConverterPlugin extends Plugin {
 
 			// Convert DOCX to Markdown
 			const converter = new DocxToMdConverter(this.logger);
-			const result = await converter.convert(buffer, basename);
+			const imageHandling = this.settings.importSettings.imageHandling;
+			const result = await converter.convert(buffer, basename, imageHandling);
 
 			// Save result
 			await this.saveConversionResult(result, basename, outputFolder);
+
+			// Delete source if enabled
+			if (this.settings.importSettings.deleteSourceAfterConversion) {
+				await this.app.vault.delete(file);
+				this.logger.info(`Deleted source file: ${file.path}`);
+			}
 
 		} catch (error) {
 			this.logger.error('Conversion failed', error);
