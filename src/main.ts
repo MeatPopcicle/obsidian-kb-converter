@@ -488,26 +488,28 @@ export default class KBConverterPlugin extends Plugin {
 	 */
 	private async getTemplateForFilename(basename: string): Promise<string | null> {
 		const lowerName = basename.toLowerCase();
-		const templatePaths = this.settings.importSettings.templatePaths;
+		const { templateBasePath, templateNames } = this.settings.importSettings;
 
-		let templatePath: string | null = null;
+		let templateName: string | null = null;
 
 		// Check for keywords in filename
 		if (lowerName.includes('how-to') || lowerName.includes('howto') || lowerName.includes('how to')) {
-			templatePath = templatePaths.howto;
+			templateName = templateNames.howto;
 			this.logger.debug(`Detected How-To template for: ${basename}`);
 		} else if (lowerName.includes('procedure')) {
-			templatePath = templatePaths.procedure;
+			templateName = templateNames.procedure;
 			this.logger.debug(`Detected Procedure template for: ${basename}`);
 		} else if (lowerName.includes('runbook')) {
-			templatePath = templatePaths.runbook;
+			templateName = templateNames.runbook;
 			this.logger.debug(`Detected Runbook template for: ${basename}`);
 		}
 
-		if (!templatePath) {
+		if (!templateName) {
 			this.logger.debug(`No template match for filename: ${basename}`);
 			return null;
 		}
+
+		const templatePath = `${templateBasePath}/${templateName}`;
 
 		// Try to read the template file
 		try {

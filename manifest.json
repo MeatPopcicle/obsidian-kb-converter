@@ -1,7 +1,7 @@
 {
 	"id": "kb-converter",
 	"name": "KB Converter",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"minAppVersion": "1.5.0",
 	"description": "Bidirectional conversion between Obsidian Markdown and Microsoft Word (DOCX) with professional styling.",
 	"author": "gauol",

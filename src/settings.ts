@@ -43,7 +43,8 @@ export interface ImportSettings {
 
 	// Template auto-apply settings
 	autoApplyTemplate: boolean;
-	templatePaths: {
+	templateBasePath: string;
+	templateNames: {
 		howto: string;
 		procedure: string;
 		runbook: string;
@@ -93,10 +94,11 @@ export const DEFAULT_SETTINGS: KBConverterSettings = {
 
 		// Template auto-apply
 		autoApplyTemplate: false,
-		templatePaths: {
-			howto: '000 Workings/20 Templates/22 Professional/22.10 AMS Documentation/TPL - How-To.md',
-			procedure: '000 Workings/20 Templates/22 Professional/22.10 AMS Documentation/TPL - Procedure.md',
-			runbook: '000 Workings/20 Templates/22 Professional/22.10 AMS Documentation/TPL - Runbook.md'
+		templateBasePath: '000 Workings/20 Templates/22 Professional/22.10 AMS Documentation',
+		templateNames: {
+			howto: 'TPL - How-To.md',
+			procedure: 'TPL - Procedure.md',
+			runbook: 'TPL - Runbook.md'
 		}
 	},
 
@@ -383,152 +385,56 @@ export class KBConverterSettingTab extends PluginSettingTab {
 
 		if (this.plugin.settings.importSettings.autoApplyTemplate) {
 			new Setting(containerEl)
-				.setName('How-To template path')
-				.setDesc('Path to How-To template (relative to vault root)')
+				.setName('Template folder')
+				.setDesc('Folder containing templates (relative to vault root)')
 				.addText(text => {
 					text
-						.setValue(this.plugin.settings.importSettings.templatePaths.howto)
+						.setPlaceholder('path/to/templates')
+						.setValue(this.plugin.settings.importSettings.templateBasePath)
 						.onChange(async (value) => {
-							this.plugin.settings.importSettings.templatePaths.howto = value;
+							this.plugin.settings.importSettings.templateBasePath = value;
 							await this.plugin.saveSettings();
 						});
 				});
 
 			new Setting(containerEl)
-				.setName('Procedure template path')
-				.setDesc('Path to Procedure template (relative to vault root)')
+				.setName('How-To template')
+				.setDesc('Filename of How-To template')
 				.addText(text => {
 					text
-						.setValue(this.plugin.settings.importSettings.templatePaths.procedure)
+						.setPlaceholder('TPL - How-To.md')
+						.setValue(this.plugin.settings.importSettings.templateNames.howto)
 						.onChange(async (value) => {
-							this.plugin.settings.importSettings.templatePaths.procedure = value;
+							this.plugin.settings.importSettings.templateNames.howto = value;
 							await this.plugin.saveSettings();
 						});
 				});
 
 			new Setting(containerEl)
-				.setName('Runbook template path')
-				.setDesc('Path to Runbook template (relative to vault root)')
+				.setName('Procedure template')
+				.setDesc('Filename of Procedure template')
 				.addText(text => {
 					text
-						.setValue(this.plugin.settings.importSettings.templatePaths.runbook)
+						.setPlaceholder('TPL - Procedure.md')
+						.setValue(this.plugin.settings.importSettings.templateNames.procedure)
 						.onChange(async (value) => {
-							this.plugin.settings.importSettings.templatePaths.runbook = value;
+							this.plugin.settings.importSettings.templateNames.procedure = value;
+							await this.plugin.saveSettings();
+						});
+				});
+
+			new Setting(containerEl)
+				.setName('Runbook template')
+				.setDesc('Filename of Runbook template')
+				.addText(text => {
+					text
+						.setPlaceholder('TPL - Runbook.md')
+						.setValue(this.plugin.settings.importSettings.templateNames.runbook)
+						.onChange(async (value) => {
+							this.plugin.settings.importSettings.templateNames.runbook = value;
 							await this.plugin.saveSettings();
 						});
 				});
 		}
-
-		// Callout Styles
-		containerEl.createEl('h3', { text: 'Callout Styles' });
-		containerEl.createEl('p', {
-			text: 'Customize colors for each callout type. Colors are hex values without #.',
-			cls: 'setting-item-description'
-		});
-
-		const calloutTypes = ['note', 'tip', 'warning', 'danger', 'info', 'question'];
-
-		for (const type of calloutTypes) {
-			const style = this.plugin.settings.calloutStyles[type];
-
-			new Setting(containerEl)
-				.setName(`${type.charAt(0).toUpperCase() + type.slice(1)} callout`)
-				.addText(text => {
-					text
-						.setPlaceholder('Background')
-						.setValue(style.background)
-						.onChange(async (value) => {
-							this.plugin.settings.calloutStyles[type].background = value;
-							await this.plugin.saveSettings();
-						});
-					text.inputEl.style.width = '80px';
-					text.inputEl.title = 'Background color';
-				})
-				.addText(text => {
-					text
-						.setPlaceholder('Border')
-						.setValue(style.border)
-						.onChange(async (value) => {
-							this.plugin.settings.calloutStyles[type].border = value;
-							await this.plugin.saveSettings();
-						});
-					text.inputEl.style.width = '80px';
-					text.inputEl.title = 'Border color';
-				});
-		}
-
-		// Code Block Styles
-		containerEl.createEl('h3', { text: 'Code Block Styles' });
-
-		new Setting(containerEl)
-			.setName('Font')
-			.setDesc('Monospace font for code blocks')
-			.addText(text => {
-				text
-					.setValue(this.plugin.settings.codeBlockStyle.fontName)
-					.onChange(async (value) => {
-						this.plugin.settings.codeBlockStyle.fontName = value;
-						await this.plugin.saveSettings();
-					});
-			});
-
-		new Setting(containerEl)
-			.setName('Font size')
-			.setDesc('Font size in points')
-			.addText(text => {
-				text
-					.setValue(String(this.plugin.settings.codeBlockStyle.fontSize))
-					.onChange(async (value) => {
-						const size = parseInt(value);
-						if (!isNaN(size) && size > 0) {
-							this.plugin.settings.codeBlockStyle.fontSize = size;
-							await this.plugin.saveSettings();
-						}
-					});
-				text.inputEl.type = 'number';
-				text.inputEl.style.width = '60px';
-			});
-
-		new Setting(containerEl)
-			.setName('Background color')
-			.setDesc('Hex color without #')
-			.addText(text => {
-				text
-					.setValue(this.plugin.settings.codeBlockStyle.background)
-					.onChange(async (value) => {
-						this.plugin.settings.codeBlockStyle.background = value;
-						await this.plugin.saveSettings();
-					});
-				text.inputEl.style.width = '80px';
-			});
-
-		// Table Styles
-		containerEl.createEl('h3', { text: 'Table Styles' });
-
-		new Setting(containerEl)
-			.setName('Header background')
-			.setDesc('Background color for table header row')
-			.addText(text => {
-				text
-					.setValue(this.plugin.settings.tableStyle.headerBackground)
-					.onChange(async (value) => {
-						this.plugin.settings.tableStyle.headerBackground = value;
-						await this.plugin.saveSettings();
-					});
-				text.inputEl.style.width = '80px';
-			});
-
-		new Setting(containerEl)
-			.setName('Header text color')
-			.setDesc('Text color for table header row')
-			.addText(text => {
-				text
-					.setValue(this.plugin.settings.tableStyle.headerTextColor)
-					.onChange(async (value) => {
-						this.plugin.settings.tableStyle.headerTextColor = value;
-						await this.plugin.saveSettings();
-					});
-				text.inputEl.style.width = '80px';
-			});
 	}
 }
